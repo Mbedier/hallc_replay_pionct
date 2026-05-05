@@ -18,6 +18,7 @@
 #include "TChain.h"
 #include "TCanvas.h"
 #include "TStopwatch.h"
+#include "simc_root/stree.h"
 
 // ****
 // To-do
@@ -67,7 +68,7 @@ bool is_50k = false;
 
 // Main function
 int get_good_coin_ev(int rnum,                 // Run number to analyze
-		     int nevent=-1,            // # of events replayed
+		     int nevent=50000,            // # of events replayed
 		     double descoinev=100000., // desired number of real coin events
 		     std::string indirroot="ROOTfiles", // Path to directory containing input ROOT file
 		     std::string indirreport="REPORT_OUTPUT/COIN/PRODUCTION", // Path to directory containing input report file
@@ -83,7 +84,7 @@ int get_good_coin_ev(int rnum,                 // Run number to analyze
   sw->Start();
   
   // Reading input ROOT files
-  std::string inrfile = Form("%s/coin_replay_production_%d_%d.root",indirroot.c_str(),rnum,nevent); // input ROOT file name with directory path
+  std::string inrfile = Form("%s/coin_replay_production_%d_latest.root",indirroot.c_str(),rnum); // input ROOT file name with directory path
   ROOT::EnableImplicitMT();
   ROOT::RDataFrame data_rdf("T",inrfile.c_str());
   // Defining new columns
@@ -101,11 +102,46 @@ int get_good_coin_ev(int rnum,                 // Run number to analyze
     .Define("ptxacc",ptxacc.c_str())
     .Define("ptyacc",ptyacc.c_str());
 
+
+  //////////////////////////////////////////////////////////////////////////////
+  // read simc root file
+
+  TString simdir = "simc_root/simc_root_files/";
+  TString simname = "H_rp1.root";
+  TString simc_root_name = simdir + simname;
+  TFile* fsim = new TFile(simc_root_name.Data(), "READ");
+  TString tree_name = "h10";
+  //TTree* simc_tree = dynamic_cast<TTree*>(fsim->Get(tree_name));
+
+  TTree* simc_tree = get_tree(fsim, tree_name);
+
+  
   // defining output ROOT file
   //Form("%s/%s_%d_%d.root",indirroot.c_str(),outfilebase.c_str(),rnum,nevent);
   TString outfile = inrfile; // Let's save the output files in the input root file
   TFile *fout = new TFile(outfile.Data(),"UPDATE");
 
+
+  // store the desited branches from simc root tree
+
+  fout->cd();
+  TH1F* MMpi = new TH1F("MMpi", "Missing Mass; mmnuc (GeV); Counts", 100, 0.8, 1.2);
+
+  simc_tree->Draw("mmnuc>>MMpi");
+
+  MMpi->Write("", TObject::kOverwrite);
+
+  fsim->Close(); 
+
+
+  
+
+  
+  
+
+    ////////////////////////////////////////////////////////////////////
+
+  
   // Defining histos
   // coin 
   TH1F *hcoin = (TH1F*)data_rdf_raw.Filter(anacuts)
