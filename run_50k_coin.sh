@@ -41,20 +41,20 @@ fi
 # Which scripts to run.
 script="SCRIPTS/${SPEC}/PRODUCTION/replay_production_${spec}_hElec_pProt.C"
 analysis="get_good_coin_ev.C"
-config="CONFIG/${SPEC}/PRODUCTION/${spec}_production_pionct.cfg"
-confighms="CONFIG/${SPEC}/PRODUCTION/${spec}_production_pionct_hms.cfg"
-configshms="CONFIG/${SPEC}/PRODUCTION/${spec}_production_pionct_shms.cfg"
-#expertConfig="CONFIG/${SPEC}/PRODUCTION/${spec}_production_pionct.cfg" 
+config="CONFIG/${SPEC}/PRODUCTION/${spec}_production_rsidis.cfg"
+confighms="CONFIG/${SPEC}/PRODUCTION/${spec}_production_rsidis_hms.cfg"
+configshms="CONFIG/${SPEC}/PRODUCTION/${spec}_production_rsidis_shms.cfg"
+#expertConfig="CONFIG/${SPEC}/PRODUCTION/${spec}_production_rsidis.cfg" 
 
 #Define some useful directories
-rootFileDir="./ROOTfiles"
-goldenDir="../ROOTfiles"
+rootFileDir="ROOTfiles"
+goldenDir="ROOTfiles"
 goldenFile="${goldenDir}/${spec}_replay_production_golden.root"
-monRootDir="./HISTOGRAMS/${SPEC}/ROOT"
-monPdfDir="./HISTOGRAMS/${SPEC}/PDF"
-reportFileDir="./REPORT_OUTPUT/${SPEC}/PRODUCTION"
-reportMonDir="./UTIL_OL/REP_MON" 
-reportMonOutDir="./MON_OUTPUT/REPORT" 
+monRootDir="HISTOGRAMS/${SPEC}/ROOT"
+monPdfDir="HISTOGRAMS/${SPEC}/PDF"
+reportFileDir="REPORT_OUTPUT/${SPEC}/PRODUCTION"
+reportMonDir="UTIL_OL/REP_MON" 
+reportMonOutDir="MON_OUTPUT/REPORT" 
 
 # Name of the report monitoring file
 reportMonFile="reportMonitor_${spec}_${runNum}_${numEvents}.txt" 
@@ -92,9 +92,9 @@ summaryFile="${reportFileDir}/summary_production_${runNum}_${numEvents}.report"
 
 # What is base name of onlineGUI output.
 outFile="${spec}_production_${runNum}"
-outExpertFile="summaryPlots_${runNum}_${spec}_production_pionct"
-outExpertFilehms="summaryPlots_${runNum}_${spec}_production_pionct_hms"
-outExpertFileshms="summaryPlots_${runNum}_${spec}_production_pionct_shms"
+outExpertFile="summaryPlots_${runNum}_${spec}_production_rsidis"
+outExpertFilehms="summaryPlots_${runNum}_${spec}_production_rsidis_hms"
+outExpertFileshms="summaryPlots_${runNum}_${spec}_production_rsidis_shms"
 outFileMonitor="output.txt"
 
 # Replay out files
@@ -148,7 +148,7 @@ hydra_configs=(
   echo ""
   echo ":=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:="
 
-  log_dir="/home/cdaq/pionct-2025/logs/${runNum}"
+  log_dir="/home/cdaq/rsidis-2025/logs/${runNum}"
   mkdir -p "$log_dir" || { echo "[FATAL] Could not create log directory: $log_dir"; exit 1; }
   
   pids=()
@@ -185,15 +185,15 @@ hydra_configs=(
   
   # If all succeeded, run change script
   if [[ ! " ${statuses[@]} " =~ [^0[:space:]] ]]; then
-    echo "[INFO] All panguin jobs succeeded. Running copy_pionct_images.sh ${runNum}"
-    copy_log="${log_dir}/copy_pionct_coin_images_${runNum}.log"
-    ./copy_pionct_images.sh "${runNum}" &> "$copy_log"
+    echo "[INFO] All panguin jobs succeeded. Running copy_rsidis_images.sh ${runNum}"
+    copy_log="${log_dir}/copy_rsidis_coin_images_${runNum}.log"
+    ./copy_rsidis_images.sh "${runNum}" &> "$copy_log"
     copy_status=$?
 
     if [ $copy_status -eq 0 ]; then
-        echo "[SUCCESS] copy_pionct_images.sh completed successfully."
+        echo "[SUCCESS] copy_rsidis_images.sh completed successfully."
     else
-        echo "[ERROR] copy_pionct_images.sh failed with status $copy_status. See log: $copy_log"
+        echo "[ERROR] copy_rsidis_images.sh failed with status $copy_status. See log: $copy_log"
     fi
   else
       echo "[ERROR] One or more panguin jobs failed. Skipping changePanguinNames script."

@@ -43,8 +43,8 @@ fi
 # Which scripts to run.
 script="SCRIPTS/${SPEC}/PRODUCTION/replay_production_${spec}_coin.C"
 analysis="get_good_dis_ev.C"
-config="CONFIG/COIN/PRODUCTION/coin_production_pionct_${spec}.cfg"
-configcnt="CONFIG/${SPEC}/PRODUCTION/${spec}_coin_production_pionct.cfg"
+config="CONFIG/COIN/PRODUCTION/coin_production_rsidis_${spec}.cfg"
+configcnt="CONFIG/${SPEC}/PRODUCTION/${spec}_coin_production_rsidis.cfg"
 expertConfig="CONFIG/${SPEC}/PRODUCTION/${spec}_coin_production_expert.cfg"
 
 #Define some useful directories
@@ -143,7 +143,7 @@ hydra_configs=(
   echo ""
   echo ":=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:="
 
-  log_dir="/home/cdaq/pionct-2025/logs/${runNum}"
+  log_dir="/home/cdaq/rsidis-2025/logs/${runNum}"
   mkdir -p "$log_dir" || { echo "[FATAL] Could not create log directory: $log_dir"; exit 1; }
   
   pids=()
@@ -180,15 +180,15 @@ hydra_configs=(
   
   # If all succeeded, run change script
   if [[ ! " ${statuses[@]} " =~ [^0[:space:]] ]]; then
-    echo "[INFO] All panguin jobs succeeded. Running copy_pionct_images.sh ${runNum}"
-    copy_log="${log_dir}/copy_pionct_shms_images_${runNum}.log"
-    ./copy_pionct_images.sh "${runNum}" &> "$copy_log"
+    echo "[INFO] All panguin jobs succeeded. Running copy_rsidis_images.sh ${runNum}"
+    copy_log="${log_dir}/copy_rsidis_shms_images_${runNum}.log"
+    ./copy_rsidis_images.sh "${runNum}" &> "$copy_log"
     copy_status=$?
 
     if [ $copy_status -eq 0 ]; then
-        echo "[SUCCESS] copy_pionct_images.sh completed successfully."
+        echo "[SUCCESS] copy_rsidis_images.sh completed successfully."
     else
-        echo "[ERROR] copy_pionct_images.sh failed with status $copy_status. See log: $copy_log"
+        echo "[ERROR] copy_rsidis_images.sh failed with status $copy_status. See log: $copy_log"
     fi
   else
       echo "[ERROR] One or more panguin jobs failed. Skipping changePanguinNames script."
