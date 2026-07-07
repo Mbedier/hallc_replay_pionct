@@ -10,9 +10,9 @@ SPEC=$(echo "$spec" | tr '[:lower:]' '[:upper:]')
 #lastRun=$( \
 #    ls raw/"${spec}"_all_*.dat raw/../raw.copiedtotape/"${spec}"_all_*.dat -R 2>/dev/null | perl -ne 'if(/0*(\d+)/) {prin#t "$1\n"}' | sort -n | tail -1 \
 #)
-lastRun=$( \
-    ls raw/rsidis_production_*.dat.0 raw/../raw.copiedtotape/rsidis_production_*.dat.0 cache/rsidis_production_*.dat.0 -R 2>/dev/null | perl -ne 'if(/0*(\d+)/) {print "$1\n"}' | sort -n | tail -1 \
-)
+# lastRun=$( \
+#     ls raw/rsidis_production_*.dat.0 raw/../raw.copiedtotape/rsidis_production_*.dat.0 cache/rsidis_production_*.dat.0 -R 2>/dev/null | perl -ne 'if(/0*(\d+)/) {print "$1\n"}' | sort -n | tail -1 \
+# )
 
 # If no arguments are given, ask the user interactively
 if [ $# -eq 0 ]; then
@@ -47,14 +47,14 @@ configshms="CONFIG/${SPEC}/PRODUCTION/${spec}_production_rsidis_shms.cfg"
 #expertConfig="CONFIG/${SPEC}/PRODUCTION/${spec}_production_rsidis.cfg" 
 
 #Define some useful directories
-rootFileDir="ROOTfiles"
-goldenDir="ROOTfiles"
+rootFileDir="./ROOTfiles"
+goldenDir="../ROOTfiles"
 goldenFile="${goldenDir}/${spec}_replay_production_golden.root"
-monRootDir="HISTOGRAMS/${SPEC}/ROOT"
-monPdfDir="HISTOGRAMS/${SPEC}/PDF"
-reportFileDir="REPORT_OUTPUT/${SPEC}/PRODUCTION"
-reportMonDir="UTIL_OL/REP_MON" 
-reportMonOutDir="MON_OUTPUT/REPORT" 
+monRootDir="./HISTOGRAMS/${SPEC}/ROOT"
+monPdfDir="./HISTOGRAMS/${SPEC}/PDF"
+reportFileDir="./REPORT_OUTPUT/${SPEC}/PRODUCTION"
+reportMonDir="./UTIL_OL/REP_MON" 
+reportMonOutDir="./MON_OUTPUT/REPORT" 
 
 # Name of the report monitoring file
 reportMonFile="reportMonitor_${spec}_${runNum}_${numEvents}.txt" 
@@ -62,8 +62,8 @@ reportMonFile="reportMonitor_${spec}_${runNum}_${numEvents}.txt"
 # Which commands to run.
 runHcana="hcana -q \"${script}(${runNum}, ${numEvents})\""
 runAnalysis="hcana -l -b -q \"${analysis}(${runNum},${numEvents},100000,\\\"${rootFileDir}\\\",\\\"${reportFileDir}\\\",\\\"${monPdfDir}\\\")\""
-runOnlineGUI="panguin -f ${config} -r ${runNum} -G ${goldenFile}"
-saveOnlineGUI="panguin -f ${config} -r ${runNum} -P -G ${goldenFile}"
+runOnlineGUI="panguin -f ${config} -r ${runNum}"
+saveOnlineGUI="panguin -f ${config} -r ${runNum} -P"
 runOnlineGUIhms="panguin -f ${confighms} -r ${runNum} -G ${goldenFile}"
 saveOnlineGUIhms="panguin -f ${confighms} -r ${runNum} -P -G ${goldenFile}"
 runOnlineGUIshms="panguin -f ${configshms} -r ${runNum} -G ${goldenFile}"
@@ -144,7 +144,7 @@ hydra_configs=(
   echo ""
   echo ":=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:="
   echo ""
-  echo "Adding PIONCT panguin plots to Hydra for run ${runNum}"
+  echo "Adding RSIDIS panguin plots to Hydra for run ${runNum}"
   echo ""
   echo ":=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:="
 

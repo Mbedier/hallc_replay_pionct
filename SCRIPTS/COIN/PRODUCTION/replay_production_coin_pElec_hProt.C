@@ -36,14 +36,37 @@ void replay_production_coin_pElec_hProt (Int_t RunNumber = 0, Int_t MaxEvent = 0
   gHcParms->Load(gHcParms->GetString("g_ctp_pcal_calib_filename"));
   gHcParms->Load(gHcParms->GetString("g_ctp_hcal_calib_filename"));
   // Load params for COIN trigger configuration
-  gHcParms->Load("PARAM/TRIG/tcoin.param");
-  // Load fadc debug parameters
+  //gHcParms->Load("PARAM/TRIG/tcoin.param");
+  gHcParms->Load("PARAM/TRIG/tcoin_phaseII.param");     // Load fadc debug parameters
   gHcParms->Load("PARAM/HMS/GEN/h_fadc_debug.param");
   gHcParms->Load("PARAM/SHMS/GEN/p_fadc_debug.param");
+
+  // //********  Start-up with no timing windows  *****************
+  // //Overwrite the existing reference times with
+  // //the default values specified in hallc_replay.  
+  // gHcParms->AddString("g_ctp_no_reference_times_filename", "PARAM/SHMS/GEN/p_no_reference_times.param");
+  // gHcParms->Load(gHcParms->GetString("g_ctp_no_reference_times_filename"));
+
+  // // Now remove all Timing Windows and revert to 
+  // // the default values specifid in hallc_replay
+  // gHcParms->AddString("g_ctp_no_timing_windows_filename", "PARAM/SHMS/GEN/pdet_cuts_no_timing_windows.param");
+  // gHcParms->Load(gHcParms->GetString("g_ctp_no_timing_windows_filename"));
+
+  // //Overwrite the existing reference times with
+  // //the default values specified in hallc_replay.  
+  // gHcParms->AddString("g_ctp_no_reference_times_filename", "PARAM/HMS/GEN/h_no_reference_times.param");
+  // gHcParms->Load(gHcParms->GetString("g_ctp_no_reference_times_filename"));
+
+  // //Now remove all Timing Windows and revert to 
+  // //the default values specifid in hallc_replay
+  // gHcParms->AddString("g_ctp_no_timing_windows_filename", "PARAM/HMS/GEN/hdet_cuts_no_timing_windows.param");
+  // gHcParms->Load(gHcParms->GetString("g_ctp_no_timing_windows_filename"));
+  // // *******
+
   // Load the Hall C detector map
   gHcDetectorMap = new THcDetectorMap();
   gHcDetectorMap->Load("MAPS/COIN/DETEC/coin.map");
-
+  
   //=:=:=:=
   // SHMS 
   //=:=:=:=
@@ -108,13 +131,15 @@ void replay_production_coin_pElec_hProt (Int_t RunNumber = 0, Int_t MaxEvent = 0
   pscaler->SetUseFirstEvent(kTRUE);
   gHaEvtHandlers->Add(pscaler);
 
-  
+
+  /*
   //Add SHMS event handler for helicity scalers
   THcHelicityScaler *phelscaler = new THcHelicityScaler("P", "Hall C helicity scaler");
   //phelscaler->SetDebugFile("PHelScaler.txt");
   phelscaler->SetROC(8);   
   phelscaler->SetUseFirstEvent(kTRUE); 
   gHaEvtHandlers->Add(phelscaler); 
+  */
   
   //=:=:=
   // HMS 
@@ -176,13 +201,15 @@ void replay_production_coin_pElec_hProt (Int_t RunNumber = 0, Int_t MaxEvent = 0
   hscaler->SetUseFirstEvent(kTRUE);
   gHaEvtHandlers->Add(hscaler);
 
-  
-  // Add HMS event handler for helicity scalers                                                                                             
+
+  /*
+  // Add HMS event handler for helicity scalers                                             
   THcHelicityScaler *hhelscaler = new THcHelicityScaler("H", "Hall C helicity scaler"); 
   //hhelscaler->SetDebugFile("HHelScaler.txt");                                                                
   hhelscaler->SetROC(5);
   hhelscaler->SetUseFirstEvent(kTRUE); 
   gHaEvtHandlers->Add(hhelscaler);
+  */
   
   //=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=
   // Kinematics Modules

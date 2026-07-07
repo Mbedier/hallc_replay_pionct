@@ -26,28 +26,28 @@ g_ctp_trigdet_filename = "PARAM/TRIG/tcoin_fall18.param"
 # phase 1 kinematics
 7000-7273
 g_ctp_parm_filename       = "DBASE/COIN/general_7000.param"
-g_ctp_kinematics_filename = "DBASE/COIN/standard.kinematics"
+g_ctp_kinematics_filename = "DBASE/COIN/auto_standard_coin.kinematics"
 g_ctp_map_filename        = "MAPS/COIN/DETEC/coin_spring19.map"
 g_ctp_trigdet_filename    = "PARAM/TRIG/tcoin_spring19.param"
 
 # phase 2 kinematics
 7274-7307
 g_ctp_parm_filename       = "DBASE/COIN/general_7274.param"
-g_ctp_kinematics_filename = "DBASE/COIN/standard.kinematics"
+g_ctp_kinematics_filename = "DBASE/COIN/auto_standard_coin.kinematics"
 g_ctp_map_filename        = "MAPS/COIN/DETEC/coin_spring19.map"
 g_ctp_trigdet_filename    = "PARAM/TRIG/tcoin_spring19.param"
 
 # phase 3 kinematics
 7308-7408
 g_ctp_parm_filename       = "DBASE/COIN/general_7308.param"
-g_ctp_kinematics_filename = "DBASE/COIN/standard.kinematics"
+g_ctp_kinematics_filename = "DBASE/COIN/auto_standard_coin.kinematics"
 g_ctp_map_filename        = "MAPS/COIN/DETEC/coin_spring19.map"
 g_ctp_trigdet_filename    = "PARAM/TRIG/tcoin_spring19.param"
 
 # phase 1 kinematics
 7409-7429
 g_ctp_parm_filename       = "DBASE/COIN/general_7000.param"
-g_ctp_kinematics_filename = "DBASE/COIN/standardn.kinematics"
+g_ctp_kinematics_filename = "DBASE/COIN/auto_standard_coin.kinematics"
 g_ctp_map_filename        = "MAPS/COIN/DETEC/coin_spring19.map"
 g_ctp_trigdet_filename    = "PARAM/TRIG/tcoin_spring19.param"
 
@@ -63,7 +63,7 @@ g_ctp_trigdet_filename    = "PARAM/TRIG/tcoin_spring19.param"
 # Beginning of R-SIDIS (Summer 2025)
 # ----- ****************** --------
 # ----- ****************** --------
-20000-99999
+20000-25603
 g_ctp_parm_filename       = "DBASE/COIN/general_rsidis.param"
 g_ctp_kinematics_filename = "DBASE/COIN/standard.kinematics"
 g_ctp_map_filename        = "MAPS/COIN/DETEC/coin.map"
@@ -84,8 +84,11 @@ g_ctp_pcal_calib_filename = "PARAM/SHMS/CAL/pcal_calib_4p500gev_13p995deg_rsidis
 23861-23875
 g_ctp_pcal_calib_filename = "PARAM/SHMS/CAL/pcal_calib_3p632gev_11p070deg_rsidis.param"
 
-23876-23956,24428-24535,24564-24571,24598-24600,24606-24610
+23876-23956
 g_ctp_pcal_calib_filename = "PARAM/SHMS/CAL/pcal_calib_2p615gev_7p865deg_rsidis.param"
+
+24428-24535,24564-24571,24598-24600,24606-24610
+g_ctp_pcal_calib_filename = "PARAM/SHMS/CAL/pcal_calib_2p615gev_7p865deg_run24000+_rsidis.param"
 
 24088-24185,24310-24427,24558-24563,24589-24597,24601-24605
 g_ctp_pcal_calib_filename = "PARAM/SHMS/CAL/pcal_calib_3p632gev_7p865deg_rsidis.param"
@@ -93,8 +96,11 @@ g_ctp_pcal_calib_filename = "PARAM/SHMS/CAL/pcal_calib_3p632gev_7p865deg_rsidis.
 23977-24087,24213-24309,24553-24557,24582-24588,24875-24876
 g_ctp_pcal_calib_filename = "PARAM/SHMS/CAL/pcal_calib_4p868gev_7p865deg_rsidis.param"
 
-23957-23976,24186-24212,24536-24552,24572-24581
+23957-23976, 24186-24212
 g_ctp_pcal_calib_filename = "PARAM/SHMS/CAL/pcal_calib_6p538gev_7p865deg_rsidis.param"
+
+24536-24552,24572-24581
+g_ctp_pcal_calib_filename = "PARAM/SHMS/CAL/pcal_calib_6p538gev_7p865deg_run24500+_rsidis.param"
 
 24611-24688,24689-24733,24861-24864,24865-24874
 g_ctp_pcal_calib_filename = "PARAM/SHMS/CAL/pcal_calib_3p632gev_11p075deg_rsidis.param"
@@ -132,7 +138,7 @@ g_ctp_pcal_calib_filename = "PARAM/SHMS/CAL/pcal_calib_3p632gev_16p810deg_rsidis
 25499-25567
 g_ctp_pcal_calib_filename = "PARAM/SHMS/CAL/pcal_calib_3p632gev_8p110deg_rsidis.param"
 
-25568-99999
+25568-25604
 g_ctp_pcal_calib_filename = "PARAM/SHMS/CAL/pcal_calib_2p000gev_18p500deg_rsidis.param"
 
 25475-25483
@@ -154,6 +160,44 @@ g_ctp_hcal_calib_filename = "PARAM/HMS/CAL/hcal_calib_1p531gev_29p045deg_rsidis.
 24875-25483
 g_ctp_hcal_calib_filename = "PARAM/HMS/CAL/hcal_calib_3p642gev_16p750deg_rsidis.param"
 
-25484-99999
+25484-25603
 g_ctp_hcal_calib_filename = "PARAM/HMS/CAL/hcal_calib_3p642gev_16p755deg_rsidis.param"
 
+
+# ----- ****************** --------
+# ----- ****************** --------
+# Beginning of R-SIDIS-II (Summer 2026)
+# ----- ****************** --------
+# ----- ****************** --------
+25604-99999
+g_ctp_parm_filename       = "DBASE/COIN/general_rsidis_phaseII.param"
+g_ctp_kinematics_filename = "DBASE/COIN/standard.kinematics"
+g_ctp_map_filename        = "MAPS/COIN/DETEC/coin.map"
+g_ctp_trigdet_filename    = "PARAM/TRIG/tcoin_phaseII.param"
+
+# -----------------------------
+# Run dependent SHMS CAL params, updated by R. Elder Jun. 2026
+# -----------------------------
+25604-27112
+g_ctp_pcal_calib_filename = "PARAM/SHMS/CAL/pcal_calib_5p520gev_rsidis_phaseII.param"
+
+27113-27200,27236-27350,
+g_ctp_pcal_calib_filename = "PARAM/SHMS/CAL/pcal_calib_2p766gev_rsidis_phaseII.param"
+
+27201-27235,27351-27397
+g_ctp_pcal_calib_filename = "PARAM/SHMS/CAL/pcal_calib_3p837gev_rsidis_phaseII.param"
+
+27398-27402
+g_ctp_pcal_calib_filename = "PARAM/SHMS/CAL/pcal_calib_2p987gev_rsidis_phaseII.param"
+
+27403-99999
+g_ctp_pcal_calib_filename = "PARAM/SHMS/CAL/pcal_calib_2p978gev_rsidis_phaseII.param"
+
+# -----------------------------
+# Run dependent HMS CAL params, updated by R. Elder Jun. 2026
+# -----------------------------
+25604-27350,27358-99999
+g_ctp_hcal_calib_filename = "PARAM/HMS/CAL/hcal_calib_1p165gev_rsidis_phaseII.param"
+
+27351-27357
+g_ctp_hcal_calib_filename = "PARAM/HMS/CAL/hcal_calib_5p390gev_rsidis_phaseII.param"
