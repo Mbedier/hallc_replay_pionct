@@ -77,7 +77,9 @@ int get_good_coin_ev(int rnum,                 // Run number to analyze
 		     std::string indirroot="ROOTfiles", // Path to directory containing input ROOT file
 		     std::string indirreport="REPORT_OUTPUT/COIN/PRODUCTION", // Path to directory containing input report file
 		     std::string outdirplot="HISTOGRAMS/COIN/PDF", // Path to directory to save output plots
-		     std::string outfilebase="output_get_good_coin_ev") // output filename prefix
+		     std::string outfilebase="output_get_good_coin_ev", // output filename prefix
+         TString tarName = "H",  // target name for simc plot (H, ld2, C, Cu)
+         TString QVal = "8.5")  // Q2 value for simc plot (8.5, 7.5, 6.5, 5)
 {
   gErrorIgnoreLevel = kError; // Ignores all ROOT warnings
 
@@ -122,6 +124,20 @@ int get_good_coin_ev(int rnum,                 // Run number to analyze
   //Form("%s/%s_%d_%d.root",indirroot.c_str(),outfilebase.c_str(),rnum,nevent);
   TString outfile = inrfile; // Let's save the output files in the input root file
   TFile *fout = new TFile(outfile.Data(),"UPDATE");
+  
+  
+  // integrate MMhists.root 
+  
+  TString fsimdir = "simc_root_files/MMhists.root"; 
+  TFile *fsim = new TFile(fsimdir.Data(), "READ"); 
+  TString simHist = Form("%s_%s", tarName.Data(), QVal.Data()); 
+  TH1F* MMsim = (TH1F*)fsim->Get(simHist); 
+  MMsim->SetDirectory(fout); 
+  CustomizeHist(MMsim); 
+  fsim->Close();
+  
+  
+
 
   // Defining histos
   // coin 
@@ -145,6 +161,10 @@ int get_good_coin_ev(int rnum,                 // Run number to analyze
     .Histo1D({"hMMpi","",int(hMMpi_range[0]),hMMpi_range[1],hMMpi_range[2]},"P.kin.secondary.MMpi")->Clone();
   TH1F *hMMpi_pd = (TH1F*)data_rdf_raw.Filter(anacuts+"&&abs(P.gtr.p)<10")
     .Histo1D({"hMMpi_pd","",int(hMMpi_range[0]),hMMpi_range[1],hMMpi_range[2]},"mmpi")->Clone();
+  TH1F *hMMpi_pd_norm = (TH1F*)(hMMpi_pd->Clone("h1"));
+  hMMpi_pd_norm->Scale(1./hMMpi_pd_norm->Integral()); 
+  hMMpi_pd_norm->GetXaxis()->SetTitle("Missing Mass (normalized)"); 
+  CustomizeHist(hMMpi_pd_norm); 
   hMMpi_pd->GetXaxis()->SetTitle("Missing Mass (GeV)"); CustomizeHist(hMMpi_pd);     
   TH2F *h2ptaccp = (TH2F*)data_rdf_raw.Filter(anacuts+"&&abs(P.gtr.p)<10")
     .Histo2D({"h2ptaccp","",100,-1,1.,100,-1.,1.},"ptx","pty")->Clone();
@@ -228,9 +248,10 @@ int get_good_coin_ev(int rnum,                 // Run number to analyze
   hW->Write("",TObject::kOverwrite);
   //
   cphys->cd(5);
-  hMMpi_pd->Draw();
-  hMMpi_pd->Write("",TObject::kOverwrite);
-  hMMpi_pd->Write("",TObject::kOverwrite);    
+  hMMpi_pd_norm->Draw("HIST");
+  MMsim->Draw("HIST SAME"); 
+  hMMpi_pd_norm->Write("",TObject::kOverwrite);
+  MMsim->Write("", TObject::kOverwrite);
   //
   cphys->cd(6);
   PlotPtAccHisto(h2ptaccp);
