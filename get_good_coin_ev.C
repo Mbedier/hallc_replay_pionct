@@ -128,13 +128,24 @@ int get_good_coin_ev(int rnum,                 // Run number to analyze
   
   // integrate MMhists.root 
   
-  TString fsimdir = "simc_root_files/MMhists.root"; 
+  TString fsimdir = "simc/allhists.root"; 
   TFile *fsim = new TFile(fsimdir.Data(), "READ"); 
-  TString simHist = Form("%s_%s", tarName.Data(), QVal.Data()); 
-  TH1F* MMsim = (TH1F*)fsim->Get(simHist); 
+  TString MMsimHist = Form("%s_%s_MM", tarName.Data(), QVal.Data()); 
+  TString Q2simHist = Form("%s_%s_Q2", tarName.Data(), QVal.Data()); 
+  TString WsimHist = Form("%s_%s_W", tarName.Data(), QVal.Data()); 
+  TH1F* MMsim = (TH1F*)fsim->Get(MMsimHist); 
+  TH1F* Q2sim = (TH1F*)fsim->Get(Q2simHist);
+  TH1F* Wsim = (TH1F*)fsim->Get(WsimHist);
   MMsim->SetDirectory(fout); 
-  CustomizeHist(MMsim); 
+  Q2sim->SetDirectory(fout); 
+  Wsim->SetDirectory(fout); 
+  //CustomizeHist(MMsim); 
+  MMsim->SetLineColor(kBlue);
+  Q2sim->SetLineColor(kBlue);
+  Wsim->SetLineColor(kBlue);
+  MMsim->GetXaxis()->CenterTitle();
   fsim->Close();
+  fout->cd();
   
   
 
@@ -150,13 +161,17 @@ int get_good_coin_ev(int rnum,                 // Run number to analyze
   hx->GetXaxis()->SetTitle("x_{bj}"); CustomizeHist(hx);
   TH1F *hQ2 = (TH1F*)data_rdf_raw.Filter(anacuts+"&&abs(H.kin.primary.Q2)<10")
     .Histo1D({"hQ2","",int(hQ2_range[0]),hQ2_range[1],hQ2_range[2]},"H.kin.primary.Q2")->Clone();
-  hQ2->GetXaxis()->SetTitle("Q^{2} (GeV/c)^{2}"); CustomizeHist(hQ2); 
+    TH1F* hQ2_norm = (TH1F*)(hQ2->Clone()); 
+  hQ2_norm->Scale(1./hQ2_norm->Integral());
+  hQ2_norm->GetXaxis()->SetTitle("Q^{2} (GeV/c)^{2}"); CustomizeHist(hQ2); 
   TH1F *hz = (TH1F*)data_rdf_raw.Filter(anacuts+"&&abs(P.gtr.p)<10")
     .Histo1D({"hz","",int(hz_range[0]),hz_range[1],hz_range[2]},"z")->Clone();
   hz->GetXaxis()->SetTitle("z"); CustomizeHist(hz);
-  TH1F *hW = (TH1F*)data_rdf_raw.Filter(anacuts+"&&abs(H.kin.primary.W)<10")
+  TH1F *hW = (TH1F*)data_rdf_raw.Filter(anacuts+"&&abs(H.kin.primary.W)<6")
     .Histo1D({"hW","",int(hW_range[0]),hW_range[1],hW_range[2]},"H.kin.primary.W")->Clone();
-  hW->GetXaxis()->SetTitle("W (GeV)"); CustomizeHist(hW);
+  TH1F* hW_norm = (TH1F*)(hW->Clone()); 
+  hW_norm->Scale(1./hW_norm->Integral());
+  hW_norm->GetXaxis()->SetTitle("W (GeV)"); CustomizeHist(hW);
   TH1F *hMMpi = (TH1F*)data_rdf_raw.Filter(anacuts+"&&abs(P.kin.secondary.MMpi)<10")
     .Histo1D({"hMMpi","",int(hMMpi_range[0]),hMMpi_range[1],hMMpi_range[2]},"P.kin.secondary.MMpi")->Clone();
   TH1F *hMMpi_pd = (TH1F*)data_rdf_raw.Filter(anacuts+"&&abs(P.gtr.p)<10")
@@ -228,7 +243,7 @@ int get_good_coin_ev(int rnum,                 // Run number to analyze
 
   // Ploting several physics histograms
   TCanvas *cphys = new TCanvas("cphys","cphys",1500,800);
-  cphys->Divide(3,2);  
+  cphys->Divide(2,2);  
   gStyle->SetOptStat(1111);
   //
   cphys->cd(1);
@@ -236,29 +251,60 @@ int get_good_coin_ev(int rnum,                 // Run number to analyze
   hx->Write("",TObject::kOverwrite);
   //
   cphys->cd(2);
-  hQ2->Draw();
-  hQ2->Write("",TObject::kOverwrite);
+  hQ2_norm->GetXaxis()->SetRangeUser(0.5, 10);
+  hQ2_norm->SetStats(0);
+  Q2sim->SetStats(0);
+  hQ2_norm->Draw("HIST");
+  Q2sim->Draw("HIST SAME"); 
+  auto legend1 = new TLegend(0.75, 0.75, 0.89, 0.89);
+  legend1->AddEntry(Q2sim, "Simulation", "l");
+  legend1->AddEntry(hQ2_norm, "True", "l");
+  legend1->Draw();
+  legend1->Write("",TObject::kOverwrite); 
+  hQ2_norm->Write("",TObject::kOverwrite);
+  Q2sim->Write("", TObject::kOverwrite);
   //
+  /*
   cphys->cd(3);
   hz->Draw();
   hz->Write("",TObject::kOverwrite);
+  */
+  //
+  cphys->cd(3);
+  hW_norm->GetXaxis()->SetRangeUser(0.5, 4);
+  hW_norm->SetStats(0);
+  Wsim->SetStats(0);
+  hW_norm->Draw("HIST");
+  Wsim->Draw("HIST SAME"); 
+  auto legend2 = new TLegend(0.75, 0.75, 0.89, 0.89);
+  legend2->AddEntry(Wsim, "Simulation", "l");
+  legend2->AddEntry(hW_norm, "True", "l");
+  legend2->Draw();
+  legend2->Write("",TObject::kOverwrite); 
+  hW_norm->Write("",TObject::kOverwrite);
+  Wsim->Write("", TObject::kOverwrite);
+  
   //
   cphys->cd(4);
-  hW->Draw();
-  hW->Write("",TObject::kOverwrite);
-  //
-  cphys->cd(5);
+  hMMpi_pd_norm->GetXaxis()->SetRangeUser(0, 2);
+  hMMpi_pd_norm->SetStats(0);
+  MMsim->SetStats(0);
   hMMpi_pd_norm->Draw("HIST");
   MMsim->Draw("HIST SAME"); 
+  auto legend3 = new TLegend(0.75, 0.75, 0.89, 0.89);
+  legend3->AddEntry(MMsim, "Simulation", "l");
+  legend3->AddEntry(hMMpi_pd_norm, "True", "l");
+  legend3->Draw();
+  legend3->Write("",TObject::kOverwrite); 
   hMMpi_pd_norm->Write("",TObject::kOverwrite);
   MMsim->Write("", TObject::kOverwrite);
   //
-  cphys->cd(6);
+  /*cphys->cd(6);
   PlotPtAccHisto(h2ptaccp);
   h2ptaccp->Write("",TObject::kOverwrite);
   cphys->Update();
   cphys->Write("",TObject::kOverwrite);
-
+*/
   // Plotting beta vs coin time
   TCanvas *cbeta = new TCanvas("cbeta","cbeta",1500,600);
   cbeta->Divide(2,1);
