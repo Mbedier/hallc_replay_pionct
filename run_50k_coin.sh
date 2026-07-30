@@ -148,7 +148,7 @@ hydra_configs=(
   echo ""
   echo ":=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:=:="
 
-  log_dir="/home/cdaq/rsidis-2025/logs/${runNum}"
+  log_dir="/home/cdaq/users/mbedier/rsidis-2025/logs/${runNum}"
   mkdir -p "$log_dir" || { echo "[FATAL] Could not create log directory: $log_dir"; exit 1; }
   
   pids=()

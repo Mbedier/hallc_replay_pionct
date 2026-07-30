@@ -6,7 +6,7 @@
 #include <iostream>
 
 
-//Declaration of leaves types
+// Declaration of leaves types
    Float_t         hsdelta;
    Float_t         hsyptar;
    Float_t         hsxptar;
@@ -41,7 +41,7 @@
    Float_t         thetapq;
    Float_t         phipq;
    Float_t         missmass;
-   Float_t         mmnuc;
+    Float_t         mmnuc;
    Float_t         phad;
    Float_t         t;
    Float_t         pmpar;
@@ -119,8 +119,8 @@
    h10->SetBranchAddress("thetapq",&thetapq);
    h10->SetBranchAddress("phipq",&phipq);
    h10->SetBranchAddress("missmass",&missmass);
-   h10->SetBranchAddress("mmnuc",&mmnuc);
-   h10->SetBranchAddress("phad",&phad);
+    h10->SetBranchAddress("mmnuc",&mmnuc);
+    h10->SetBranchAddress("phad",&phad);
    h10->SetBranchAddress("t",&t);
    h10->SetBranchAddress("pmpar",&pmpar);
    h10->SetBranchAddress("pmper",&pmper);

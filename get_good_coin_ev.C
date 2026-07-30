@@ -78,8 +78,8 @@ int get_good_coin_ev(int rnum,                 // Run number to analyze
 		     std::string indirreport="REPORT_OUTPUT/COIN/PRODUCTION", // Path to directory containing input report file
 		     std::string outdirplot="HISTOGRAMS/COIN/PDF", // Path to directory to save output plots
 		     std::string outfilebase="output_get_good_coin_ev", // output filename prefix
-         TString tarName = "H",  // target name for simc plot (H, ld2, C, Cu)
-         TString QVal = "8.5")  // Q2 value for simc plot (8.5, 7.5, 6.5, 5)
+         TString tarName = "C",  // target name for simc plot (H, ld2, C, Cu)
+         TString QVal = "4.3")  // Q2 value for simc plot (8.5, 7.5, 6.5, 5)
 {
   gErrorIgnoreLevel = kError; // Ignores all ROOT warnings
 
@@ -128,7 +128,7 @@ int get_good_coin_ev(int rnum,                 // Run number to analyze
   
   // integrate MMhists.root 
   
-  TString fsimdir = "simc/allhists.root"; 
+  TString fsimdir = "simc/simHists.root"; 
   TFile *fsim = new TFile(fsimdir.Data(), "READ"); 
   TString MMsimHist = Form("%s_%s_MM", tarName.Data(), QVal.Data()); 
   TString Q2simHist = Form("%s_%s_Q2", tarName.Data(), QVal.Data()); 
@@ -136,6 +136,9 @@ int get_good_coin_ev(int rnum,                 // Run number to analyze
   TH1F* MMsim = (TH1F*)fsim->Get(MMsimHist); 
   TH1F* Q2sim = (TH1F*)fsim->Get(Q2simHist);
   TH1F* Wsim = (TH1F*)fsim->Get(WsimHist);
+  if (!MMsim) { std::cout << "could not retrieve " << Form("%s_%s_MM", tarName.Data(), QVal.Data()); }
+   if (!Q2sim) { std::cout << "could not retrieve " << Form("%s_%s_Q2", tarName.Data(), QVal.Data()); }
+    if (!Wsim) { std::cout << "could not retrieve " << Form("%s_%s_W", tarName.Data(), QVal.Data()); }
   MMsim->SetDirectory(fout); 
   Q2sim->SetDirectory(fout); 
   Wsim->SetDirectory(fout); 
@@ -254,6 +257,8 @@ int get_good_coin_ev(int rnum,                 // Run number to analyze
   hQ2_norm->GetXaxis()->SetRangeUser(0.5, 10);
   hQ2_norm->SetStats(0);
   Q2sim->SetStats(0);
+  auto scalefac = hQ2_norm->GetMaximum()/ Q2sim->GetMaximum(); 
+  Q2sim->Scale(scalefac);
   hQ2_norm->Draw("HIST");
   Q2sim->Draw("HIST SAME"); 
   auto legend1 = new TLegend(0.75, 0.75, 0.89, 0.89);
@@ -262,7 +267,7 @@ int get_good_coin_ev(int rnum,                 // Run number to analyze
   legend1->Draw();
   legend1->Write("",TObject::kOverwrite); 
   hQ2_norm->Write("",TObject::kOverwrite);
-  Q2sim->Write("", TObject::kOverwrite);
+  Q2sim->Write("Q2sim", TObject::kOverwrite);
   //
   /*
   cphys->cd(3);
@@ -274,6 +279,8 @@ int get_good_coin_ev(int rnum,                 // Run number to analyze
   hW_norm->GetXaxis()->SetRangeUser(0.5, 4);
   hW_norm->SetStats(0);
   Wsim->SetStats(0);
+  auto scalefac2 = hW_norm->GetMaximum()/ Wsim->GetMaximum(); 
+  Wsim->Scale(scalefac2);
   hW_norm->Draw("HIST");
   Wsim->Draw("HIST SAME"); 
   auto legend2 = new TLegend(0.75, 0.75, 0.89, 0.89);
@@ -282,13 +289,15 @@ int get_good_coin_ev(int rnum,                 // Run number to analyze
   legend2->Draw();
   legend2->Write("",TObject::kOverwrite); 
   hW_norm->Write("",TObject::kOverwrite);
-  Wsim->Write("", TObject::kOverwrite);
+  Wsim->Write("Wsim", TObject::kOverwrite);
   
   //
   cphys->cd(4);
-  hMMpi_pd_norm->GetXaxis()->SetRangeUser(0, 2);
+  hMMpi_pd_norm->GetXaxis()->SetRangeUser(0, 16);
   hMMpi_pd_norm->SetStats(0);
   MMsim->SetStats(0);
+  auto scalefac3 = hMMpi_pd_norm->GetMaximum()/ MMsim->GetMaximum(); 
+  MMsim->Scale(scalefac3);
   hMMpi_pd_norm->Draw("HIST");
   MMsim->Draw("HIST SAME"); 
   auto legend3 = new TLegend(0.75, 0.75, 0.89, 0.89);
@@ -296,8 +305,9 @@ int get_good_coin_ev(int rnum,                 // Run number to analyze
   legend3->AddEntry(hMMpi_pd_norm, "True", "l");
   legend3->Draw();
   legend3->Write("",TObject::kOverwrite); 
-  hMMpi_pd_norm->Write("",TObject::kOverwrite);
-  MMsim->Write("", TObject::kOverwrite);
+  hMMpi_pd_norm->Write("hMMpi_pd_norm",TObject::kOverwrite);
+  MMsim->Write("MMsim", TObject::kOverwrite);
+  cphys->Write("",TObject::kOverwrite);
   //
   /*cphys->cd(6);
   PlotPtAccHisto(h2ptaccp);
