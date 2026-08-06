@@ -19,8 +19,8 @@
 #include "TCanvas.h"
 #include "TStopwatch.h"
 
-const double Mp = 0.938272;
-
+const double Mp = 11.176;
+const double MA = 11.176;
 // ****
 // To-do
 // 1. Add RF plot (which branch to use?)
@@ -114,11 +114,26 @@ int get_good_coin_ev(int rnum,                 // Run number to analyze
     auto Pmiss = (Pe - Peprime + Pp) - Phadron;
     return Pmiss.M();
   };  
+
+  // Missing mass 
+  std::string MM="sqrt(-H.kin.primary.Q2+pow("+(std::string)Form("%f", MA)+",2)+.139*.139+2*H.kin.primary.nu*"+(std::string)Form("%f", MA)+ "-2*"+Epi+"*"+(std::string)Form("%f", MA)+ "-2*H.kin.primary.nu*"+Epi+"+2*sqrt(H.kin.primary.Q2+pow(H.kin.primary.nu,2))*P.gtr.p*cos(P.kin.secondary.th_xq))";
+  double Q2mean = data_rdf.Filter(anacuts).Mean("H.kin.primary.Q2").GetValue();
+  double TrgMass = ExtractValueFromReportFile(inrepfile, "Target mass (amu)", ':', 0); 
+   
+  
+ 
+  tarName = TrgMass < 2 ? "H" : (TrgMass < 11.5 ? "D" : (TrgMass < 60 ? "C" : "Cu") );
+  QVal = Q2mean < 6 ? "5" : (Q2mean < 7 ? "6.5" : (Q2mean < 8 ? "7.5" : "8.5"));
+  std::cout << "Target Mass (amu) is: " << TrgMass << '\n'; 
+  std::cout << "Q2 Value is: " << Q2mean << '\n';
+
+  std::cout << "Selected simc hists: " << Form("%s_%s", tarName, Qval); 
   auto data_rdf_raw = data_rdf.Define("z",z.c_str())
     .Define("ptx",ptx.c_str())
     .Define("pty",pty.c_str())
     .Define("mmpi", calc_mm,
-	    {"H.gtr.px", "H.gtr.py", "H.gtr.pz", "H.gtr.p", "P.gtr.px", "P.gtr.py", "P.gtr.pz", "P.gtr.p"});
+	    {"H.gtr.px", "H.gtr.py", "H.gtr.pz", "H.gtr.p", "P.gtr.px", "P.gtr.py", "P.gtr.pz", "P.gtr.p"})
+      .Define("MM",MM.c_str());
 
   // defining output ROOT file
   //Form("%s/%s_%d_%d.root",indirroot.c_str(),outfilebase.c_str(),rnum,nevent);
@@ -154,6 +169,14 @@ int get_good_coin_ev(int rnum,                 // Run number to analyze
 
 
   // Defining histos
+  //missing mass 
+   std::vector<double> MM_range{200, MA-.2, MA+1.8};
+
+  TH1F *hMM = (TH1F*)data_rdf_raw.Filter(anacuts)
+    .Histo1D({"MM","",int(MM_range[0]),MM_range[1], MM_range[2]},"MM")->Clone();
+  hMM->GetXaxis()->SetTitle("Missing Mass [GeV/c^2]"); CustomizeHist(hMM);
+  TH1F* hMM_norm = (TH1F*)(hMM->Clone());
+  hMM_norm->Scale(1./hMM_norm->Integral()); 
   // coin 
   TH1F *hcoin = (TH1F*)data_rdf_raw.Filter(anacuts)
     .Histo1D({"hcoin","",int(hcoin_range[0]),hcoin_range[1],hcoin_range[2]},coinTbranch.c_str())->Clone();
@@ -197,6 +220,7 @@ int get_good_coin_ev(int rnum,                 // Run number to analyze
   h2pbetaVScoin->SetStats(0);
   h2pbetaVScoin->GetYaxis()->SetTitle("SHMS #beta"); h2pbetaVScoin->GetYaxis()->CenterTitle();  
   h2pbetaVScoin->GetXaxis()->SetTitle("e-#pi Coincidence Time (ns)"); h2pbetaVScoin->GetXaxis()->CenterTitle();  
+ 
 
   // Plotting and fitting the coin time histo
   TCanvas *ccoin = new TCanvas("ccoin","ccoin",1500,600);
@@ -293,19 +317,20 @@ int get_good_coin_ev(int rnum,                 // Run number to analyze
   
   //
   cphys->cd(4);
-  hMMpi_pd_norm->GetXaxis()->SetRangeUser(0, 16);
-  hMMpi_pd_norm->SetStats(0);
+  //hMMpi_pd_norm->GetXaxis()->SetRangeUser(0, 16);
+  //hMMpi_pd_norm->SetStats(0);
+  hMM_norm->SetStats(0);
   MMsim->SetStats(0);
-  auto scalefac3 = hMMpi_pd_norm->GetMaximum()/ MMsim->GetMaximum(); 
+  auto scalefac3 = hMM_norm->GetMaximum()/ MMsim->GetMaximum(); 
   MMsim->Scale(scalefac3);
-  hMMpi_pd_norm->Draw("HIST");
+  hMM_norm->Draw("HIST");
   MMsim->Draw("HIST SAME"); 
   auto legend3 = new TLegend(0.75, 0.75, 0.89, 0.89);
   legend3->AddEntry(MMsim, "Simulation", "l");
-  legend3->AddEntry(hMMpi_pd_norm, "True", "l");
+  legend3->AddEntry(hMM_norm, "True", "l");
   legend3->Draw();
   legend3->Write("",TObject::kOverwrite); 
-  hMMpi_pd_norm->Write("hMMpi_pd_norm",TObject::kOverwrite);
+  hMM_norm->Write("hMM_norm",TObject::kOverwrite);
   MMsim->Write("MMsim", TObject::kOverwrite);
   cphys->Write("",TObject::kOverwrite);
   //
